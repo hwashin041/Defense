@@ -19,15 +19,20 @@ var spawn_timer = 0.0
 var playing = false
 var ended = ""
 var font: Font
+var sound: Node
+var shoot_sound_cooldown := 0.0
 
 func _ready() -> void:
     font = ThemeDB.fallback_font
+    sound = preload("res://sound.gd").new()
+    add_child(sound)
     queue_redraw()
 
 func _process(delta: float) -> void:
     if ended != "":
         queue_redraw()
         return
+    shoot_sound_cooldown = maxf(0.0, shoot_sound_cooldown - delta)
     if spawning > 0:
         spawn_timer -= delta
         if spawn_timer <= 0.0:
@@ -42,8 +47,10 @@ func _process(delta: float) -> void:
         if e["dist"] >= path_length():
             enemies.erase(e)
             lives -= 1
+            sound.effect("hurt")
             if lives <= 0:
                 ended = "GAME OVER"
+                sound.effect("lose")
     for t in towers:
         t["cd"] -= delta
         if t["cd"] > 0:
@@ -58,9 +65,13 @@ func _process(delta: float) -> void:
             t["cd"] = RATE[k]
             shots.append({"a":t["pos"],"b":target["pos"],"ttl":0.2,"color":COLORS[k]})
             target["hp"] -= DAMAGE[k]
+            if shoot_sound_cooldown <= 0.0:
+                sound.effect("shoot")
+                shoot_sound_cooldown = 0.22
             if target["hp"] <= 0:
                 gold += target["reward"]
                 enemies.erase(target)
+                sound.effect("kill")
     for s in shots.duplicate():
         s["ttl"] -= delta
         if s["ttl"] <= 0:
@@ -69,6 +80,7 @@ func _process(delta: float) -> void:
         playing = false
         if wave >= 8:
             ended = "YOU WIN!"
+            sound.effect("win")
         else:
             gold += 40 + wave * 8
     queue_redraw()
@@ -98,6 +110,10 @@ func _input(event: InputEvent) -> void:
     if ended != "":
         get_tree().reload_current_scene()
         return
+    if pos.y < 105 and pos.x > 570:
+        sound.toggle_mute()
+        queue_redraw()
+        return
     if pos.y >= 1105:
         selected = clampi(int((pos.x-20.0)/235.0),0,2)
         return
@@ -106,6 +122,7 @@ func _input(event: InputEvent) -> void:
         playing = true
         spawning = 5 + wave * 2
         spawn_timer = 0.1
+        sound.effect("start")
         return
     for pad in PADS:
         if pad.distance_to(pos) < 49:
@@ -116,6 +133,7 @@ func _input(event: InputEvent) -> void:
             if not occupied and gold >= COSTS[selected]:
                 gold -= COSTS[selected]
                 towers.append({"pos":pad,"kind":selected,"cd":0.1})
+                sound.effect("place")
             return
 
 func label(s: String, p: Vector2, size: int = 24, color: Color = Color("594a72")) -> void:
@@ -131,6 +149,7 @@ func _draw() -> void:
             draw_circle(Vector2(x+28,y+31),4,Color("d0e9d8"))
     panel(Rect2(15,20,690,135),Color.WHITE)
     label("CANDY GUARD",Vector2(36,78),42,Color("a969ba"))
+    label("SOUND OFF" if sound != null and sound.muted else "SOUND ON",Vector2(565,62),22,Color("a969ba"))
     label("GOLD: %d" % gold,Vector2(38,124),27,Color("bc913b"))
     label("HEART: %d" % lives,Vector2(378,124),27,Color("ee7597"))
     panel(Rect2(16,170,396,93),Color.WHITE)
