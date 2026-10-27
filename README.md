@@ -1,7 +1,7 @@
-# Candy Guard 🍬
+# 🍬 Candy Guard
 
-Godot 4 2D tower defense for Android.
+Godot 4 mobile tower-defense prototype. Eight waves, three candy towers, cute 2D graphics. Tap pads to place towers and START WAVE to begin.
 
-GitHub Actions → Build Candy Guard APK → Artifacts → CandyGuard-Android-APK.
+To get APK: **Actions → Build Candy Guard APK → latest successful run → Artifacts → CandyGuard-Android-APK**.
 
-This is a prototype/debug APK for personal testing.
+Test/debug build; not yet verified on a physical Android device.
