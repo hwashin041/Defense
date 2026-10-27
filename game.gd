@@ -19,7 +19,7 @@ var spawn_timer = 0.0
 var playing = false
 var ended = ""
 var font: Font
-var sound: Node
+var sound
 var shoot_sound_cooldown := 0.0
 
 func _ready() -> void:
