@@ -1,9 +1,9 @@
 extends Node
 
 # Procedural chiptune audio: no external sound files or licenses required.
-const SAMPLE_RATE := 22050
-const TAU_F := PI * 2.0
-const SONG := [392.0, 523.25, 587.33, 659.25, 587.33, 523.25, 440.0, 392.0, 349.23, 440.0, 523.25, 587.33, 523.25, 440.0, 392.0, 0.0]
+const SAMPLE_RATE = 22050
+const TAU_F = PI * 2.0
+const SONG = [392.0, 523.25, 587.33, 659.25, 587.33, 523.25, 440.0, 392.0, 349.23, 440.0, 523.25, 587.33, 523.25, 440.0, 392.0, 0.0]
 var music_player: AudioStreamPlayer
 var effect_players: Array[AudioStreamPlayer] = []
 var music_cache: Dictionary = {}
