@@ -19,6 +19,7 @@ var spawn_timer = 0.0
 var playing = false
 var ended = ""
 var font: Font
+var tower_images = [preload("res://assets/tower_heart.png"), preload("res://assets/tower_star.png"), preload("res://assets/tower_rapid.png")]
 var sound
 var shoot_sound_cooldown := 0.0
 
@@ -172,12 +173,9 @@ func _draw() -> void:
             label("+",pad+Vector2(-15,18),53,Color("8ac9af"))
         else:
             var kind: int = tower["kind"]
-            draw_circle(pad,35,COLORS[kind])
-            draw_circle(pad+Vector2(-12,-8),6,Color.WHITE)
-            draw_circle(pad+Vector2(12,-8),6,Color.WHITE)
-            draw_circle(pad+Vector2(-12,-8),2,Color("5a4261"))
-            draw_circle(pad+Vector2(12,-8),2,Color("5a4261"))
-            draw_arc(pad,14,0.3,2.8,18,Color("6e526e"),3)
+            draw_circle(pad,38,COLORS[kind])
+            var tower_rect = Rect2(pad.x-56.0,pad.y-76.0,112.0,112.0)
+            draw_texture_rect(tower_images[kind],tower_rect,false)
     for e in enemies:
         var p: Vector2 = e["pos"]
         var r = 32.0 if e["boss"] else 24.0
@@ -193,8 +191,8 @@ func _draw() -> void:
     for i in range(3):
         var p = Vector2(22+i*235,1128)
         panel(Rect2(p,Vector2(215,120)),Color("fcefdc") if selected == i else Color("eaf2f0"))
-        draw_circle(p+Vector2(33,35),20,COLORS[i])
-        label(["COTTON","LEMON","MINT"][i],p+Vector2(64,45),23)
+        draw_texture_rect(tower_images[i],Rect2(p.x+9.0,p.y+8.0,48.0,48.0),false)
+        label(["HEART","STAR","RAPID"][i],p+Vector2(64,45),23)
         label("%d GOLD" % COSTS[i],p+Vector2(60,86),21,Color("b28647"))
     if ended != "":
         panel(Rect2(55,475,610,290),Color("f8edff"))
